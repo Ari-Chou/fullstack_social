@@ -1,3 +1,6 @@
-module.exports = function (req, res) {
-   res.view('pages/post/home')
-}
+module.exports = async function (req, res) {
+  const allPosts = await Post.find();
+  res.view("pages/post/home", {
+    allPosts,
+  });
+};

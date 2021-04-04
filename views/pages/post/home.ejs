@@ -1,7 +1,17 @@
-<div style="background-color: lightgray; padding: 20px; width: 100%; text-align: center;">
+<div style="background-color: lightgray; width: 100%; text-align: center;">
     is my post page
-    <form action="/post" method="POST" style="width: 70%; margin: auto; background-color: royalblue; text-align: center;">
+    <form action="/post" method="POST" style="width: 400px; margin: auto; background-color: royalblue; text-align: center;">
         <input type="text" name="PostBody" placeholder="Post">
         <button>Submit</button>
     </form>
+
+    <% allPosts.forEach((post) => {%>
+        <div style="width: 100%;">
+            <div style="width: 400px; background: white; margin: auto; padding: 20px; margin-top: 20px; text-align: left;">
+                <p><%= post.text %> </p>
+            </div>
+        </div>
+            
+
+   <% }) %> 
 </div>
