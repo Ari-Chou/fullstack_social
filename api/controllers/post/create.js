@@ -1,8 +1,7 @@
 module.exports = async function (req, res) {
   const postBody = req.body.PostBody; // Get the input value
-  await Post.create({ text: postBody }); // Create Post
-
-  const posts = await Post.find({}); // Get the Posts
-  res.send(posts); // Send back to browser
+  const userId = req.session.userId; // when you login the sails while generate the userId
+  await Post.create({ text: postBody, user: userId }).fetch(); // Create Post
+  res.redirect("/post");
   console.log("create a new Post:", postBody);
 };
