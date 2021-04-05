@@ -77,5 +77,9 @@ module.exports.routes = {
   "POST /post": "post/create",
   "GET /customauth/login": { // custom login page
     view: "pages/customauth/custom-login",
-  }
+    locals: {
+      layout: 'layouts/auth-layout'
+    }
+  },
 };
+
