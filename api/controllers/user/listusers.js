@@ -6,5 +6,6 @@ module.exports = async function (req, res) {
     users.forEach(user => {
         objc.push({ id: user.id, fullName: user.fullName, email: user.emailAddress})
     });
+
     res.send(users)
 }

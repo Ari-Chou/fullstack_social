@@ -1,22 +1,54 @@
-<!-- Action Input -->
-<div style="background-color: lightgray; width: 100%; height: 100vh; text-align: center;">
-    is my post page
-    <form action="/post" method="POST" style="width: 400px; margin: auto; background-color: royalblue; text-align: center;">
-        <input type="text" name="PostBody" placeholder="Post">
-        <button>Submit</button>
+<style>
+    #selectedImage {
+        max-width: 400px;
+        display: none;
+    }
+
+    #post__image {
+        max-width: 400px;
+    }
+</style>
+
+<script>
+    function onFileChange(event) {
+        const imageFile = event.target.files[0]
+        const imageSrc = window.URL.createObjectURL(imageFile)
+        document.getElementById("selectedImage").src = imageSrc
+        document.getElementById("selectedImage").style.display = 'block'
+    }
+</script>
+
+
+
+<div style="background-color: rgb(238, 238, 238); 
+    padding: 24px">
+
+    <form style='margin-bottom: 12px' action="/post" method="POST" enctype="multipart/form-data">
+        <input name='postBody' type="text" placeholder="Enter post text">
+        <button type="submit">Create Post</button>
+        <br>
+        <br>
+        <div>
+            <input name="imagefile" onchange="onFileChange(event)" type="file">
+            <img id="selectedImage" src="" alt="">
+        </div>
     </form>
 
-    <!-- Posts -->
-    <% allPosts.forEach((post) => {%>
-        <div style="width: 100%;">
-            <div style="width: 400px; background: white; margin: auto; padding: 20px; margin-top: 20px; text-align: left;">
-                <p><%= post.user.fullName %> </p>
-                <div style="color: gray;">
-                    <p><%= new Date(post.createdAt).toLocaleTimeString() + " " + new Date(post.createdAt).toLocaleDateString() %> </p>
-                </div>
-                
-                <p><%= post.text %> </p>
+
+    Below are all of my posts:
+    <% allPosts.forEach(p => { %>
+        <div style='background-color: white; padding: 16px;
+            margin-bottom: 12px'>
+            <div style='font-weight: bold'>
+                <%= p.user.fullName %>
             </div>
+            <div style="color: rgb(186, 186, 186)">
+                <%= new Date(p.createdAt).toLocaleTimeString() 
+                + " "  + new Date(p.createdAt).toLocaleDateString() %>
+            </div>
+            <%= p.text %>
+            <img id="post__image" src="<%= p.imageUrl %> " alt="">
         </div>
-   <% }) %> 
+    <% }) %>
+
 </div>
