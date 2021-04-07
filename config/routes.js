@@ -74,6 +74,7 @@ module.exports.routes = {
 
   "GET /listusers": "user/listusers",
   "GET /post": "post/home",
+  "GET /search": "user/search",
   "POST /post": "post/create",
   "DELETE /post/:postId": "post/delete",
   "GET /customauth/login": { // custom login page

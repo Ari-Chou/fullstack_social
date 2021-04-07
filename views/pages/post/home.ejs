@@ -1,4 +1,6 @@
 <style>
+
+    [v-cloak] { display:none; }
     .post__wrapper {
         display: flex;
         flex-direction: column;
@@ -25,12 +27,78 @@
     }
 
     .post__image img{
-        object-fit: cover;
+        object-fit: contain;
         width: 100%;
+        height: 400px;
+        
     }
 
     .post__text {
         padding: 16px;
+    }
+
+    .delete__conform {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        left: 0;
+        top: 0;
+        background-color: rgba(0, 0, 0, 0.8);
+        padding-top: 100px;
+    }
+
+    .delete__conform__wrapper {
+        background-color: white;
+        width: 50%;
+        margin: auto;
+        padding: 16px;
+        border-radius: 5px;
+    }
+
+    .delete__message {
+        font-weight: bold;
+    }
+
+    .delete__button_group {
+       display: flex;
+    }
+
+    .delete__button_group button {
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .delete__gray__button {
+        background-color: gray;
+    }
+
+    .delete__red__button {
+        background-color: red;
+    }
+
+    .modal__container {
+        width: 100%; height: 100%;
+            top: 0; left: 0;
+            position: fixed;
+            padding-top: 200px;
+            background-color: rgba(0, 0, 0, 0.8)
+    }
+
+    .modal__form {
+        margin: auto; background-color: white; 
+        width: 50%; padding: 16px;
+        border-radius: 5px
+    }
+
+    .create__gray_button {
+        background-color: gray;
+    }
+
+    .create__red_button {
+        background-color: red;
     }
 </style>
 
@@ -44,7 +112,57 @@
 <div style="background-color: rgb(238, 238, 238); 
     padding: 24px">
 
-    <div id="app">
+    <div id="app" v-cloak>
+        <div v-if="showDeleteConform" class="delete__conform">
+            <div class="delete__conform__wrapper">
+                <div class="delete__message">
+                   <p>Did you conform delete this post? This action can not be withdraw!</p> 
+                </div>
+                <div class="delete__button_group">
+                    <div style="flex: 1;"></div>
+                    <button v-on:click="hideConform()" style="margin-right: 10px;">CENCLE</button>
+                    <button v-on:click="conformDeletePost" v-bind:class="[isDeleting ? 'delete__gray__button' : 'delete__red__button']">DELETE</button>
+                </div>
+            </div>
+        </div>
+
+
+        <div v-if='shouldShowPostForm' class="modal__container">
+            <div class="modal__form">
+                <div>
+                    Create Post
+                </div>
+                <!-- v-model is used to bidirectionally bind a state variable to an input -->
+                <textarea style="height: 100px; width: 100%; 
+                    border: solid 1px darkgray; margin: 12px 0px;
+                    border-radius: 5px; font-size: 14px;
+                    padding: 12px" 
+                    v-model="postBodyText"
+                    placeholder="Enter post body here">
+                </textarea>
+                <input v-on:change="handleFileChange" type="file">
+                <img style="max-width: 100%; margin-top: 12px" :src="postFileImageSource">
+                <div style="display: flex; margin-top: 16px">
+                    <div style="flex: 1"></div>
+                    <button v-on:click="shouldShowPostForm = false"
+                            class="cancel">Cancel</button>
+                    <button :disabled="isCreatingPost"
+                        style="color: white; border-radius: 5px; border: solid 1px; margin-left: 12px"
+                        v-bind:class="isCreatingPost ? 'create__gray_button' : 'create__blue__button'"
+                        v-on:click="createPost()">
+                        Create
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <button v-on:click="shouldShowPostForm = true"
+            style="width: 100%; background-color: white; 
+                border: solid 1px white; height: 34px;
+                font-weight: bold; font-size: 14px; border-radius: 5px;
+                margin-bottom: 16px">Create Post</button>
+
+
         <div v-for="p in posts">
             <div class="post__wrapper">
 
@@ -61,7 +179,7 @@
                 <div class="post__text">
                     {{p.text}}
                 </div>
-                <button v-on:click="deletePost(p)">DELETE</button>
+                <button v-on:click="deleteButtonTapped(p)">DELETE</button>
             </div>
         </div>
     </div>
@@ -74,20 +192,60 @@
     var app = new Vue({
         el: "#app",
         data: {
-            posts: window.SAILS_LOCALS.allPosts
+            posts: window.SAILS_LOCALS.allPosts,
+            showDeleteConform: false,
+            isDeleting: false,
+            postBodyText: null,
+            selectedFile: null,
+            postFileImageSource: null,
+            slectedDeletePost: null,
+            shouldShowPostForm: false,
+            isCreatingPost: false
         },
         methods: {
-            deletePost: async function(post) {
-                const postId = post.id
+            handleFileChange: function(event) {
+                this.selectedFile = event.target.files[0]
+                this.postFileImageSource = window.URL.createObjectURL(this.selectedFile)
+            },
 
+            createPost: async function() {
+                const formData = new FormData()
+                formData.append('postBody', this.postBodyText)
+                formData.append('imagefile', this.selectedFile)
+                this.isCreatingPost = true
                 try {
+                   await axios.post('/post', formData)
+                    location.reload()
+                }catch (error) {
+                    this.isCreatingPost = false
+                    console.log(error.toString())
+                }
+            },
+
+            deleteButtonTapped: async function(post) {
+                this.slectedDeletePost = post
+                this.showDeleteConform = true
+                return
+            },
+
+            conformDeletePost: async function() {
+                const postId = this.slectedDeletePost.id
+                this.showDeleteConform = false
+                
+                try {
+                    this.isDeleting = true
                     await axios.delete(`/post/${postId}`)
                     this.posts = this.posts.filter(p => {
                         return p.id != post.id
                     })
+                    this.isDeleting = false
                 } catch(error) {
                     console.log(error.toString())
                 }
+            },
+
+            hideConform: function() {
+                this.showDeleteConform = false
             }
         }
     })
