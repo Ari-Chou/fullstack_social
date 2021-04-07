@@ -12,7 +12,7 @@ module.exports.routes = {
   //  ╦ ╦╔═╗╔╗ ╔═╗╔═╗╔═╗╔═╗╔═╗
   //  ║║║║╣ ╠╩╗╠═╝╠═╣║ ╦║╣ ╚═╗
   //  ╚╩╝╚═╝╚═╝╩  ╩ ╩╚═╝╚═╝╚═╝
-  "GET /": { action: "view-homepage-or-redirect" },
+  //"GET /": { action: "view-homepage-or-redirect" },
   "GET /welcome/:unused?": { action: "dashboard/view-welcome" },
 
   "GET /faq": { action: "view-faq" },
@@ -72,6 +72,7 @@ module.exports.routes = {
     hasSocketFeatures: true,
   },
 
+  "GET /": "post/home",
   "GET /listusers": "user/listusers",
   "GET /post": "post/home",
   "GET /search": "user/search",
@@ -83,5 +84,8 @@ module.exports.routes = {
       layout: 'layouts/auth-layout'
     }
   },
+  "POST /follow/:id": "user/follow",
+  "POST /unfollow/:id": "user/unfollow",
+  "GET /profile": "user/profile"
 };
 

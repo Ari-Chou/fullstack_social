@@ -10,5 +10,6 @@ module.exports = async function (req, res) {
 
   res.view("pages/post/home", {
     allPosts,
+    layout: "layouts/nav-layout"
   });
 }; 

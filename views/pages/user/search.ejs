@@ -1,1 +1,84 @@
-<div>this is the search page</div>
+<style>
+    #app {
+        padding: 20px;
+    }
+    .user__wrapper {
+        background: white;
+        padding: 20px;
+        border-bottom: 1px solid lightgray;
+        display: flex;
+        align-items: center;
+        border-radius: 4px;
+    }
+
+    .user__action__button {
+        padding: 5px 10px;
+        background: white;
+        border: 0.2px solid lightgray;
+        border-radius: 4px;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .following{
+        background: black;
+        color: white;
+    }
+
+    .not__following {
+        background: white;
+        color: black;
+    }
+</style>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<%- /* Expose locals as `window.SAILS_LOCALS` :: */ exposeLocalsToBrowser() %>
+
+<%- partial('../../partials/navbar.ejs') %> 
+
+<div id="app">
+    <div v-for="user in users" v-bind:key="user.id" class="user__wrapper">
+        <div>
+            <div>
+                {{user.fullName}}
+            </div>
+            <div>
+                {{user.emailAddress}}
+            </div>
+        </div>
+        <div style="flex: 1;"></div>
+        <div>
+            <button v-on:click="follow(user)" v-bind:class="[user.isFollowing ? 'following' : 'not__following']" class="user__action__button">{{user.isFollowing ? 'Unfollow': 'Follow'}}</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const users = window.SAILS_LOCALS.users
+
+    const app = new Vue({
+        el: "#app",
+        data: {
+            message: "hello user page",
+            users: users
+        },
+        methods: {
+            follow: async function(user) {
+                
+                if(user.isFollowing) {
+                    await axios.post('/unfollow/' + user.id)
+                }else {
+                    await axios.post('/follow/' + user.id)
+                }
+
+                const originalId = user.id
+                user.id = "TEMP"
+                user.isFollowing = !user.isFollowing
+                user.id = originalId
+            }
+        }
+    })
+</script>
