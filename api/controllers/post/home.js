@@ -8,6 +8,10 @@ module.exports = async function (req, res) {
       res.send(allPosts)
   }
 
+  allPosts.forEach(p => {
+    p.user = {id: p.user.id, fullName: p.user.fullName}
+  });
+  
   res.view("pages/post/home", {
     allPosts,
     layout: "layouts/nav-layout"

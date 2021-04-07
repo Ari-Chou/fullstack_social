@@ -97,8 +97,8 @@
         background-color: gray;
     }
 
-    .create__red_button {
-        background-color: red;
+    .create__blue__button {
+        background-color: blue;
     }
 </style>
 
@@ -107,7 +107,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<%- /* Expose locals as `window.SAILS_LOCALS` :: */ exposeLocalsToBrowser() %>
+<%- /* Expose locals as `window.SAILS_LOCALS` :: */ exposeLocalsToBrowser({keys: ['allPosts']}) %>
 <%- partial('../../partials/navbar.ejs') %> 
 
 <div style="background-color: rgb(238, 238, 238); 
