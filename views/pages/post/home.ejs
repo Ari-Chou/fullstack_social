@@ -1,54 +1,94 @@
 <style>
-    #selectedImage {
-        max-width: 400px;
-        display: none;
+    .post__wrapper {
+        display: flex;
+        flex-direction: column;
+        background-color: white;
     }
 
-    #post__image {
-        max-width: 400px;
+    .post__header {
+        height: 60px;
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .post__header .post__username {
+        font-weight: bold;
+    }
+
+    .post__header .post__date {
+        color: gray;
+    }
+
+    .post__image {
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .post__image img{
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .post__text {
+        padding: 16px;
     }
 </style>
 
-<script>
-    function onFileChange(event) {
-        const imageFile = event.target.files[0]
-        const imageSrc = window.URL.createObjectURL(imageFile)
-        document.getElementById("selectedImage").src = imageSrc
-        document.getElementById("selectedImage").style.display = 'block'
-    }
-</script>
 
 
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<%- /* Expose locals as `window.SAILS_LOCALS` :: */ exposeLocalsToBrowser() %>
 
 <div style="background-color: rgb(238, 238, 238); 
     padding: 24px">
 
-    <form style='margin-bottom: 12px' action="/post" method="POST" enctype="multipart/form-data">
-        <input name='postBody' type="text" placeholder="Enter post text">
-        <button type="submit">Create Post</button>
-        <br>
-        <br>
-        <div>
-            <input name="imagefile" onchange="onFileChange(event)" type="file">
-            <img id="selectedImage" src="" alt="">
-        </div>
-    </form>
+    <div id="app">
+        <div v-for="p in posts">
+            <div class="post__wrapper">
 
+                <div class="post__header">
+                    <div class="post__username">{{p.user.fullName}}</div>
+                    <div class="post__date">{{new Date(p.createdAt).toLocaleTimeString() 
+                        + " "  + new Date(p.createdAt).toLocaleDateString()}}
+                    </div>
+                </div>
 
-    Below are all of my posts:
-    <% allPosts.forEach(p => { %>
-        <div style='background-color: white; padding: 16px;
-            margin-bottom: 12px'>
-            <div style='font-weight: bold'>
-                <%= p.user.fullName %>
+                <div class="post__image">
+                    <img :src="p.imageUrl" alt="postImage">
+                </div>
+                <div class="post__text">
+                    {{p.text}}
+                </div>
+                <button v-on:click="deletePost(p)">DELETE</button>
             </div>
-            <div style="color: rgb(186, 186, 186)">
-                <%= new Date(p.createdAt).toLocaleTimeString() 
-                + " "  + new Date(p.createdAt).toLocaleDateString() %>
-            </div>
-            <%= p.text %>
-            <img id="post__image" src="<%= p.imageUrl %> " alt="">
         </div>
-    <% }) %>
-
+    </div>
 </div>
+
+
+
+
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            posts: window.SAILS_LOCALS.allPosts
+        },
+        methods: {
+            deletePost: async function(post) {
+                const postId = post.id
+
+                try {
+                    await axios.delete(`/post/${postId}`)
+                    this.posts = this.posts.filter(p => {
+                        return p.id != post.id
+                    })
+                } catch(error) {
+                    console.log(error.toString())
+                }
+            }
+        }
+    })
+</script>
