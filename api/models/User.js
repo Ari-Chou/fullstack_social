@@ -12,7 +12,8 @@ module.exports = {
       fullName: this.fullName,
       emailAddress: this.emailAddress,
       following: this.following,
-      followers: this.followers
+      followers: this.followers,
+      posts: this.posts // we can grap the posts from  publicprofile.js
    }
   },
 
