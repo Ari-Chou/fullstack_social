@@ -42,9 +42,9 @@
 <div id="app">
     <div v-for="user in users" v-bind:key="user.id" class="user__wrapper">
         <div>
-            <div>
+            <a :href="'/user/' + user.id">
                 {{user.fullName}}
-            </div>
+            </a>
             <div>
                 {{user.emailAddress}}
             </div>
