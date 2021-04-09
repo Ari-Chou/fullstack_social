@@ -11,6 +11,7 @@
 
 module.exports.bootstrap = async function() {
 
+  sails.moment = require('moment')
   // Import dependencies
   var path = require('path');
 

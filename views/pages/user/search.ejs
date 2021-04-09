@@ -39,7 +39,7 @@
 
 <%- partial('../../partials/navbar.ejs') %> 
 
-<div id="app">
+<div id="app" style="width: 630px; margin: auto;">
     <div v-for="user in users" v-bind:key="user.id" class="user__wrapper">
         <div>
             <a :href="'/user/' + user.id">

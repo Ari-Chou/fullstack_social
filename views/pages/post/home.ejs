@@ -5,12 +5,24 @@
         display: flex;
         flex-direction: column;
         background-color: white;
+        margin-bottom: 20px;
     }
 
     .post__header {
         height: 60px;
         padding: 16px;
-        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+    }
+
+    .post__header img {
+        object-position: center; /* Center the image within the element */
+        object-fit: cover;
+        width: 50px;
+        height: 50px;
+        border-radius: 100px;
+        border: solid 1px rgb(94, 94, 94);
+        margin-right: 10px;
     }
 
     .post__header .post__username {
@@ -100,6 +112,18 @@
     .create__blue__button {
         background-color: blue;
     }
+
+    .create__post__button {
+        position: fixed; 
+        height: 60px;
+        width: 60px;
+        background: white;
+        bottom: 20px;
+        right: 20px;
+        border: none;
+        border-radius: 30px;
+        outline: none;
+    }
 </style>
 
 
@@ -111,9 +135,9 @@
 <%- partial('../../partials/navbar.ejs') %> 
 
 <div style="background-color: rgb(238, 238, 238); 
-    padding: 24px">
+    padding: 24px; position: relative;">
 
-    <div id="app" v-cloak>
+    <div id="app" style="width: 630px; margin: auto;" v-cloak>
         <div v-if="showDeleteConform" class="delete__conform">
             <div class="delete__conform__wrapper">
                 <div class="delete__message">
@@ -157,21 +181,23 @@
             </div>
         </div>
 
-        <button v-on:click="shouldShowPostForm = true"
-            style="width: 100%; background-color: white; 
-                border: solid 1px white; height: 34px;
-                font-weight: bold; font-size: 14px; border-radius: 5px;
-                margin-bottom: 16px">Create Post</button>
+        <button class="create__post__button" v-on:click="shouldShowPostForm = true">
+            Create
+        </button>
 
 
         <div v-for="p in posts">
             <div class="post__wrapper">
 
                 <div class="post__header">
-                    <div class="post__username">{{p.user.fullName}}</div>
-                    <div class="post__date">{{new Date(p.createdAt).toLocaleTimeString() 
-                        + " "  + new Date(p.createdAt).toLocaleDateString()}}
+                    <div><img class="profile__icon" :src="p.user.profileImageUrl" alt=""></div>
+                    <div>
+                        <div class="post__username">{{p.user.fullName}}</div>
+                        <div class="post__date">
+                        {{p.fromNow}}
+                        </div>
                     </div>
+                    
                 </div>
 
                 <div class="post__image">
