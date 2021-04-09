@@ -2,7 +2,18 @@ module.exports = async function (req, res) {
   
   //await Post.destroy({})
   const userId = req.session.userId;
-  const allPosts = await Post.find({ user: userId }).populate('user').sort("createdAt DESC");
+
+  // base on we followed user we will re
+  // const allPosts = await Post.find({ user: userId }).populate('user').sort("createdAt DESC");
+  const allPosts = []
+  const feeditems = await FeedItem.find({ user: userId }).sort('postCreatedAt DESC').populate('post').populate('postOwner')
+  
+  feeditems.forEach(f => {
+    console.log(f.post)
+    f.post.user = f.postOwner
+    allPosts.push(f.post)
+  })
+
 
   if (req.wantsJSON) {
       res.send(allPosts)

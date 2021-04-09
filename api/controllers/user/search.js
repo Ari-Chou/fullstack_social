@@ -11,17 +11,9 @@ module.exports = async function (req, res) {
             }
         })
     })
-    // const followingDictionary = new Object()
-    // currentUser.following.forEach(f => {
-    //     followingDictionary[f.id] = f
-    // })
-
-    // users.forEach(u => {
-    //     u.isFollowing = followingDictionary[u.id] != null
-    // })
 
     const sanitizedUsers = users.map(u => {
-        return {id: u.id, fullName: u.fullName, emailAddress: u.emailAddress, isFollowing: u.isFollowing}
+        return {id: u.id, fullName: u.fullName, emailAddress: u.emailAddress, isFollowing: u.isFollowing, profileImageUrl: u.profileImageUrl}
     })
 
     if (req.wantsJSON) {
