@@ -1,167 +1,172 @@
 <style>
     #app {
-        max-width: 630px;
-        height: 100vh;
+        background: rgb(250, 250, 250);
+        padding: 20px;
+        width: 935px;
         margin: auto;
-        padding: 30px 20px 0;
-        overflow: hidden;
     }
 
-    .header {
-        width: 100%;
-        height: 70px;
-        margin-bottom: 20px;
-        display: flex;
-        flex-direction: column;
-        background-color: rgb(255, 255, 255);
-    }
-
-    .profile_header__status {
-        display: flex;
-    }
-
-    .profile_header__status div {
-        margin-right: 10px;
-    }
-
-    /* Following Form */
-
-    .following__form__container {
-        width: 100%; height: 100%;
-        top: 0; left: 0;
-        position: fixed;
-        padding-top: 200px;
-        background-color: rgba(0, 0, 0, 0.8)
-    }
-
-    .following__form {
-        margin: auto; background-color: white; 
-        width: 50%;
-        height: 500px;
-        border-radius: 5px;
-        overflow: hidden;
-    }
-
-    .following__form_header {
-        width: 100%;
-        height: 50px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding-left: 20px;
-        padding-right: 20px;
-        box-sizing: border-box;
-    }
-
-    .following__form__list__container {
-        width: 100%;
-        height: 100%;
-        background: lightgray;
-    }
-
-    .following__form__list {
-        padding: 10px;
-        background: white;
-    }
-
-    /* Post Image Wrapper */
-    .profile__post__cards {
+    .card__group {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        grid-gap: 5px;
+        justify-items: center;
+        grid-gap: 10px;
+    }
+    .card {
+        width: 293px;
+        height: 293px;
+        overflow: hidden;
+        background: rgb(255, 255, 255);
     }
 
-    .profile__post__card {
-        height: 200px;
-        width: 200px;
-        position: relative;
-        overflow: hidden;
+    .card img {
+        height: 110%;
+        width: 110%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .profile__form {
+        margin-bottom: 20px;
+        padding: 10px;
+    }
+
+    .profile__form__item {
         display: flex;
         align-items: center;
-        background-color: rgb(255, 255, 255);
+        margin-bottom: 16px;
     }
 
-    .profile__post__card img {
-        position: absolute;
-        margin: auto;
-        width: 100%;
+    .profile__form__label {
+        font-size: 15px;
+        font-weight: bold;
+        margin-right: 16px; 
+        width: 140px;
+        text-align: right
     }
-    
+
+    .fullname__input {
+        font-size: 14px; padding: 8px; border-radius: 5px; 
+        border: solid 1px rgb(206, 206, 206);
+        outline: none;
+    }
+
+    .profile__icon {
+        object-position: center; /* Center the image within the element */
+        object-fit: cover;
+        width: 64px;
+        height: 64px;
+        border-radius: 100px;
+        border: solid 1px rgb(94, 94, 94);
+    }
+
+    .disabled-button {
+        background-color: rgb(201, 201, 201)
+    }
+
+    .save-button {
+        flex: 1; width: 100%; 
+        color: white; font-weight: bold;
+        padding: 8px; border: solid; border-radius: 5px; font-size: 16px
+    }
+
+    .blue-button {
+        background-color: dodgerblue
+    }
 </style>
-
-
-
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <%- /* Expose locals as `window.SAILS_LOCALS` :: */ exposeLocalsToBrowser({keys: ['user']}) %>
 
 
-
 <%- partial('../../partials/navbar.ejs') %> 
-<div>
-    <div id="app">
-
-        <div v-if="showFollowingForm" v-for="u in user.following" class="following__form__container">
-            <div class="following__form">
-                <div class="following__form_header">
-                    <div></div>
-                    <h1 style="text-align: center; font-size: 20px;">Following</h1>
-                    <div v-on:click="closeFollowingForm()" style="cursor: pointer;">X</div>
+<div id="app">
+    <div class="profile__form" style="background: rgb(255, 255, 255)">
+        <div>Account Settings</div>
+        <div >
+            <div class="profile__form__item">
+                <div class="profile__form__label">
+                    Email Address:
                 </div>
-                <div class="following__form__list__container">
-                    <div class="following__form__list">
-                        <div>{{u.fullName}}</div>
-                        <div>{{u.emailAddress}}</div>
+                <div style="font-size: 14px;">{{user.emailAddress}}</div>
+            </div>
+
+            <div class="profile__form__item">
+                <div class="profile__form__label">
+                    Full Name:
+                </div>
+                <input type="text" v-model="user.fullName" class="fullname__input">
+            </div>
+
+            <div class="profile__form__item">
+                <div class='profile__form__label'>
+                    Bio:
+                </div>
+                <div style="font-size: 14px">
+                    <textarea v-model="user.bio"
+                        style="font-size: 14px; padding: 8px; border-radius: 5px; 
+                            width: 300px;
+                            border: solid 1px rgb(206, 206, 206)">
+                    </textarea>
+                </div>
+            </div>
+
+            <div class="profile__form__item">
+                <div class='profile__form__label'>
+                    Avatar:
+                </div>
+                <div>
+                    <img class="profile__icon" 
+                        :src="user.profileImageUrl">
+                    <div style="margin-top: 12px">
+                        <input type="file" v-on:change="handleAvatarChange">
                     </div>
                 </div>
             </div>
+            <button v-on:click="handleSave" :disabled="isSaving"
+                    v-bind:class="isSaving ? 'disabled-button save-button' : 'blue-button save-button'">
+                    Save
+            </button>
         </div>
-
-
-        <div class="header">
-            <div style="font-size: 24px; font-weight: bold;">{{user.fullName}}</div>
-            <div style="flex: 1;"></div>
-            <div class="profile_header__status">
-                <div>Posts</div>
-                <div v-on:click="handleFollowingClick()"><span style="font-weight: bold; margin-right: 5px;">{{user.following.length}}</span>Following</div>
-                <div><span style="font-weight: bold; margin-right: 5px;">{{user.followers.length}}</span>Followers</div>
-            </div>
-        </div>
-
-        <div class="profile__post__cards" >
-           
-                <div class="profile__post__card"  v-for="p in user.posts">
-                    <img :src="p.imageUrl" alt="">
-                </div>
-           
+        
+    </div>
+    <div class="card__group">
+        <div class="card" v-for="p in user.posts">
+            <img :src="p.imageUrl" alt="">
         </div>
     </div>
+    
 </div>
 
 <script>
     const user = window.SAILS_LOCALS.user
+    user.profileImageUrl = null
     const app = new Vue({
-        el: '#app',
+        el: "#app",
         data: {
-            message: "hell profile page",
+            message: "hello my profile page",
             user: user,
-            showFollowingForm: false,
-            showFollowerForm: false
+            avatarFile: null,
+            
         },
         methods: {
-            handleFollowingClick: function() {
-                this.showFollowingForm = true
-                console.log('spple')
+            handleAvatarChange: function(event) {
+                this.avatarFile = event.target.files[0]
+                this.user.profileImageUrl = window.URL.createObjectURL(this.avatarFile)
             },
-            handleFollowerClick: function() {
-                this.showFollowerForm = true
-                console.log("apple")
-            },   
-            closeFollowingForm: function() {
-                this.showFollowingForm = false
-            },
-            
+
+            handleSave: function() {
+                const formData = new FormData()
+                formData.append("fullName", this.user.fullName)
+                formData.append("bio", this.user.bio)
+                formData.append("imageFile", this.avatarFile)
+
+                try {
+                    await axios.post('/profile', formData)
+                }catch (error) {
+                    console.log('Failedto save user profile data', error.toString())
+                }
+            }
         }
     })
 </script>

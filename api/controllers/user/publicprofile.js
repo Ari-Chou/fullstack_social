@@ -3,13 +3,23 @@ module.exports = async function (req, res) {
     const id = req.param('id')
     const user = await User.findOne({ id: id }).populate('following').populate('followers')
     
-    const posts = await Post.find({ user: id }).populate('user')
+    const posts = await Post.find({ user: id }).sort('createdAt DESC').populate('user')
     user.posts = posts
 
-    console.log(posts)
-    const userObject = JSON.parse(JSON.stringify(user))
+    user.followers.forEach(f => { // in the bublicProfile page
+        if (f.id === req.session.userId) {
+            user.isFollowing = true
+        }
+    })
 
-    res.view('pages/user/profile', {
+    const userObject = JSON.parse(JSON.stringify(user))
+    userObject.isFollowing = user.isFollowing
+
+    if (req.wantsJSON) {
+        res.send(userObject)
+    }
+
+    res.view('pages/user/publicprofile', {
         layout: 'layouts/nav-layout',
         user: userObject
     })
