@@ -1,6 +1,6 @@
 module.exports = async function (req, res) {
     const currentUser = await User.findOne({ id: req.session.userId }).populate('following').populate('followers')
-    const posts = await Post.find({ user: req.session.userId }).populate('user')
+    const posts = await Post.find({ user: req.session.userId }).populate('user').sort("createdAt DESC");
 
     currentUser.posts = posts
     const userObject = JSON.parse(JSON.stringify(currentUser))
@@ -8,7 +8,7 @@ module.exports = async function (req, res) {
     if (req.wantsJSON) {
         return res.send(currentUser)
     }
-    
+
     res.view('pages/user/profile', {
         layout: 'layouts/nav-layout',
         user: userObject

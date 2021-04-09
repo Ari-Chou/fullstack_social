@@ -140,7 +140,7 @@
 
 <script>
     const user = window.SAILS_LOCALS.user
-    user.profileImageUrl = null
+    // user.profileImageUrl = null
     const app = new Vue({
         el: "#app",
         data: {
@@ -155,7 +155,7 @@
                 this.user.profileImageUrl = window.URL.createObjectURL(this.avatarFile)
             },
 
-            handleSave: function() {
+            handleSave: async function() {
                 const formData = new FormData()
                 formData.append("fullName", this.user.fullName)
                 formData.append("bio", this.user.bio)
@@ -163,6 +163,7 @@
 
                 try {
                     await axios.post('/profile', formData)
+                    location.reload()
                 }catch (error) {
                     console.log('Failedto save user profile data', error.toString())
                 }

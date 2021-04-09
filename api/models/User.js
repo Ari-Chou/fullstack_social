@@ -13,11 +13,21 @@ module.exports = {
       emailAddress: this.emailAddress,
       following: this.following,
       followers: this.followers,
-      posts: this.posts // we can grap the posts from  publicprofile.js
+      posts: this.posts, // we can grap the posts from  publicprofile.js
+      bio: this.bio,
+      profileImageUrl: this.profileImageUrl
    }
   },
 
   attributes: {
+
+    bio: {
+      type: 'string'
+    },
+
+    profileImageUrl: {
+      type: 'string'
+    },
 
     following: {
       collection: 'user'

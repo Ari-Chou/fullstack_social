@@ -88,6 +88,6 @@ module.exports.routes = {
   "POST /unfollow/:id": "user/unfollow",
   "GET /profile": "user/profile",
   "GET /user/:id": "user/publicprofile",
-  "POST /profile": ""
+  "POST /profile": "user/update"
 };
 
