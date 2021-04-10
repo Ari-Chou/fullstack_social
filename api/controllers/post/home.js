@@ -16,6 +16,7 @@ module.exports = async function (req, res) {
     if (f.post) {
       f.post.user = f.postOwner // because you should use user to setup user fullName profileImagr ect...
       f.post.canDelete = f.post.user.id == req.session.userId
+      f.post.hasLiked = f.hasLiked
       allPosts.push(f.post)
     }
   })

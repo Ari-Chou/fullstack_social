@@ -90,6 +90,8 @@ module.exports.routes = {
   "GET /user/:id": "user/publicprofile",
   "POST /profile": "user/update",
   "GET /post/:id": "post/index",
-  "POST /comment/post/:id": "comment/create"
+  "POST /comment/post/:id": "comment/create",
+  "POST /like/:id": "post/like",
+  "POST /dislike/:id": "post/dislike"
 };
 
