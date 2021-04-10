@@ -1,0 +1,89 @@
+<style>
+    .center {
+        object-position: center; /* Center the image within the element */
+        object-fit: cover;
+        width: 32px;
+        height: 32px;
+        border-radius: 100px;
+        border: solid 1px rgb(94, 94, 94);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<%- /* Expose locals as `window.SAILS_LOCALS` :: */ exposeLocalsToBrowser({keys: ['post']}) %>
+<%- partial('../../partials/navbar.ejs') %> 
+
+<div id="app">
+    <main style="background-color: rgb(250, 250, 250);">
+        <div v-for="p in [post]" style="width: 736px; margin: auto; padding: 20px; display: flex; background: rgb(255, 255, 255);">
+            <div class="left" style="width: 598; height: 450px; display: flex; ">
+                <img style="width: 100%; margin: auto;" :src="p.imageUrl" alt="">
+            </div>
+            <div class="right" style="width: 334; height: 450px; position: relative;">
+                <!-- Header -->
+                <div class="header" style="padding: 16px; display: flex; align-items: center; border-bottom: 1px solid rgba(239, 239, 3239, 1);">
+                    <div style="display: block; width: fit-content; position: relative; margin-right: 10px;">
+                        <div >
+                            <img class="center" :src="p.user.profileImageUrl" alt="">
+                        </div>
+                    </div>
+                    <div>{{p.user.fullName}}</div>
+                    <div style="flex: 1;"></div>
+                    
+                </div>
+                <!-- Comments count label -->
+                <div style="font-size: 20px; font-weight: bold; padding-left: 16px;">
+                    Comments {{post.comments.length}}
+                </div>
+                <!-- Comments -->
+                <div style="  width: 100%; position: absolute; top: 95px; bottom: 70px; overflow-y: scroll; box-sizing: border-box; padding: 16px 16px;">
+                    <div v-for="c in post.comments" style="background: white; margin-bottom: 10px; ">
+                        <div style="display: flex;">
+                            <div style="margin-right: 10px;">
+                                <img class="center"  :src="c.user.profileImageUrl" alt="">
+                            </div>
+                            <div style="width: 100%;">
+                                <h2 style="font-size: 17px; margin: 0;">{{c.user.fullName}}</h2>
+                                <span>{{c.text}}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex;">
+                            <div style="flex: 1;"></div>
+                            <div style="font-size: 10px; color: gray;">
+                                {{c.fromNow}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Text Aera -->
+                <div style="height: 56px; width: 100%; padding-left: 16px; position: absolute; bottom: 0; display: flex; align-items: center; box-sizing: border-box;">
+                    <textarea v-model="postText" name="text" placeholder="Add a comment..." style="border: none; height: 70%; outline: none;"></textarea>
+                    <div style="flex: 1;"></div>
+                    <button v-on:click="handleSendButton" style="border: none; outline: none; color: rgb(49, 145, 297); background-color: white; cursor: pointer;">Post</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    const app = new Vue({
+        el: "#app",
+        data: {
+            message: "hello vue",
+            post: window.SAILS_LOCALS.post,
+            postText: null, 
+            commentsCount: 0
+        },
+        methods: {
+            handleSendButton:async function() {
+                console.log(this.postText)
+                const formData = new FormData()
+                formData.append('text', this.postText)
+                const response = await axios.post('/comment/post/' + this.post.id, formData)
+                location.reload()
+            }
+        }
+    })
+</script>

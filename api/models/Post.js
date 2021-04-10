@@ -18,7 +18,6 @@ module.exports = {
     },
     user: {
       model: "user"
-      
     },
   },
 };

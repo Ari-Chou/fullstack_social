@@ -15,9 +15,20 @@ module.exports = async function (req, res) {
       postOwner: userId,
       user: userId,
       postCreatedAt: record.createdAt
-  })
-    res.redirect("/post");
+    })
     
+    // when we create a post we will insert to all of my followers 
+    const user = await User.findOne({ id: userId }).populate('followers')
+    user.followers.forEach( async f => {
+      await FeedItem.create({
+        post: record.id,
+        postOwner: userId,
+        user: f.id,
+        postCreatedAt: record.createdAt
+      })
+    })
+    
+    res.send()
   } catch (error) {
     res.serverError(error.toString())
   }

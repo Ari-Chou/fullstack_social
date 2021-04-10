@@ -13,6 +13,8 @@
         padding: 16px;
         display: flex;
         align-items: center;
+        justify-content: space-between;
+
     }
 
     .post__header img {
@@ -35,14 +37,12 @@
 
     .post__image {
         overflow: hidden;
-        margin-bottom: 10px;
     }
 
     .post__image img{
         object-fit: contain;
         width: 100%;
         height: 400px;
-        
     }
 
     .post__text {
@@ -146,7 +146,7 @@
                 <div class="delete__button_group">
                     <div style="flex: 1;"></div>
                     <button v-on:click="hideConform()" style="margin-right: 10px;">CENCLE</button>
-                    <button v-on:click="conformDeletePost" v-bind:class="[isDeleting ? 'delete__gray__button' : 'delete__red__button']">DELETE</button>
+                    <button v-on:click="conformDeletePost()" v-bind:class="[isDeleting ? 'delete__gray__button' : 'delete__red__button']">DELETE</button>
                 </div>
             </div>
         </div>
@@ -190,23 +190,31 @@
             <div class="post__wrapper">
 
                 <div class="post__header">
-                    <div><img class="profile__icon" :src="p.user.profileImageUrl" alt=""></div>
-                    <div>
-                        <div class="post__username">{{p.user.fullName}}</div>
-                        <div class="post__date">
-                        {{p.fromNow}}
+                    <div style="display: flex; align-items: center;">
+                        <div>
+                            <img class="profile__icon" :src="p.user.profileImageUrl" alt="">
+                        </div>
+                        <div>
+                            <div class="post__username">{{p.user.fullName}}</div>
+                            <div class="post__date">
+                            {{p.fromNow}}
+                            </div>
                         </div>
                     </div>
-                    
+                    <div >
+                        <button style="border: none; background: white; outline: none; font-size: 20px; font-weight: bold; cursor: pointer;"  v-if="p.canDelete" v-on:click="deleteButtonTapped(p)">---</button>
+                    </div>
                 </div>
 
                 <div class="post__image">
                     <img :src="p.imageUrl" alt="postImage">
                 </div>
+                <div style="padding: 0px 16px;">
+                    <a :href="'/post/' + p.id">Comment</a>
+                </div>
                 <div class="post__text">
                     {{p.text}}
                 </div>
-                <button v-on:click="deleteButtonTapped(p)">DELETE</button>
             </div>
         </div>
     </div>
@@ -263,10 +271,10 @@
                     this.isDeleting = true
                     await axios.delete(`/post/${postId}`)
                     this.posts = this.posts.filter(p => {
-                        return p.id != post.id
+                        return p.id != this.slectedDeletePost.id
                     })
-                    this.isDeleting = false
                 } catch(error) {
+                    this.isDeleting = false
                     console.log(error.toString())
                 }
             },
