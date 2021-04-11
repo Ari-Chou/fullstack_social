@@ -6,4 +6,5 @@
 ## Password: 123123
 
 
+## There is an iOS app also can be access, plase check the fullstack_ios repository.
 
